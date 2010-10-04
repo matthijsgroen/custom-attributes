@@ -1,0 +1,7 @@
+.idea
+*.log
+*.sqlite3
+/pkg/*
+.bundle
+spec/database.yml
+Gemfile.lock

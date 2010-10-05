@@ -64,6 +64,17 @@ describe "Custom attributes of a person" do
     loaded_person.custom_attributes.telephone_value_of(:private).should == "06 28 61 06 28"
   end
 
+  it "should rename labels" do
+    @person.custom_attributes.add_telephone "Werk", "06 28 61 06 28"
+
+    fields = @person.custom_attributes.telephone_attributes
+    fields.should have(1).item
+    fields[0].value.should == "06 28 61 06 28"
+    fields[0].rename_to "Prive"
+
+    @person.custom_attributes.telephone_value_of(:private).should == "06 28 61 06 28"
+  end
+
 
 end
 
@@ -90,6 +101,17 @@ describe "Custom attributes of a product" do
     @product.save
     @product.width.should == nil
     @product.custom_attributes.size_value_of(:width).should == 5.60
+  end
+
+  it "should rename labels" do
+    @product.custom_attributes.add_size "Width", 5.60
+
+    fields = @product.custom_attributes.size_attributes
+    fields.should have(1).item
+    fields[0].value.should == 5.60
+    fields[0].rename_to "Height"
+
+    @product.custom_attributes.size_value_of(:width).should == nil
   end
 
 end

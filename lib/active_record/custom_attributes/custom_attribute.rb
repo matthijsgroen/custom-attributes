@@ -9,6 +9,10 @@ class ActiveRecord::CustomAttributes::CustomAttribute
 
   attr_accessor :type, :value, :label, :internal_label
 
+  def rename_to new_name
+    item_list.rename_label_of self, new_name
+  end
+
   def save
     attribute_model.value_type = type.to_s
     attribute_model.field_name = internal_label.to_s

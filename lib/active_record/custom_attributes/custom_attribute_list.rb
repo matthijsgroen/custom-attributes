@@ -18,7 +18,7 @@ class ActiveRecord::CustomAttributes::CustomAttributeList
     defined_attributes.each do |type, attributes|
       attributes.each do |name, options|
         if cache_attribute = options[:on_model]
-          if attribute = get_attribute(type, name, name)
+          if attribute = get_attribute(type, name)
             record.send("#{cache_attribute}=", attribute.value)
           else
             record.send("#{cache_attribute}=", nil)
@@ -37,6 +37,12 @@ class ActiveRecord::CustomAttributes::CustomAttributeList
     standard_attribute_types = {}
     ActiveRecord::CustomAttributes::CUSTOM_ATTRIBUTE_TYPES.each { |t| standard_attribute_types[t.to_sym] = t.to_sym }
     @supported_attribute_types = (standard_attribute_types.merge extra_attribute_types)
+  end
+
+  def rename_label_of attribute, new_name
+    internal_label = convert_to_internal_label(attribute.type, new_name)
+    attribute.label = new_name
+    attribute.internal_label = internal_label
   end
 
   private
@@ -85,7 +91,7 @@ class ActiveRecord::CustomAttributes::CustomAttributeList
   end
 
   def get_value_of(type, internal_label)
-    found = loaded_attributes.find { |i| i.type == type and i.internal_label == internal_label }
+    found = get_attribute(type, internal_label)
     found.value if found
   end
 

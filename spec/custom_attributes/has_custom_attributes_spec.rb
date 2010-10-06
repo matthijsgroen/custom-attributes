@@ -40,7 +40,7 @@ describe "Custom attributes of a person" do
     fields[0].value.should == "06 28 61 06 28"
   end
 
-  it "should cache fields locally" do
+  it "should cache the 'born on' date locally" do
     @person.custom_attributes.add_date "Born on", Date.civil(1981, 5, 31)
     @person.save
     @person.born_on.should == Date.civil(1981,5, 31)
@@ -103,11 +103,17 @@ describe "Custom attributes of a product" do
     fields[0].value.should == 5.60
   end
 
-  it "should cache not fields locally" do
+  it "should not cache width locally" do
     @product.custom_attributes.add_size "Width", 5.60
     @product.save
     @product.width.should == nil
     @product.custom_attributes.size_value_of(:width).should == 5.60
+  end
+
+  it "should cache the details url locally" do
+    @product.custom_attributes.add_url "Details", "http://example.com/"
+    @product.save
+    @product.details_url.should == "http://example.com/"
   end
 
   it "should rename labels" do

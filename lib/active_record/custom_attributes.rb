@@ -15,15 +15,16 @@ module ActiveRecord
       end
 
       def has_custom_attributes(extra_field_types = {}, &block)
-        raise "Block expected" unless block_given?
+        field_types = extra_field_types
+        field_types = self.defined_custom_field_types.merge(extra_field_types) if has_custom_attributes?
 
-        field_definitions = CustomAttributeDefinitionHelper.new extra_field_types
-        yield field_definitions
+        field_definitions = CustomAttributeDefinitionHelper.new field_types
+        yield field_definitions if block_given?
         defined_custom_attributes = field_definitions.defined_attributes
 
         if has_custom_attributes?
           write_inheritable_attribute(:defined_custom_attributes, self.defined_custom_attributes.deep_merge(defined_custom_attributes))
-          write_inheritable_attribute(:defined_custom_field_types, self.extra_field_types.merge(extra_field_types))
+          write_inheritable_attribute(:defined_custom_field_types, field_types)
         else
           write_inheritable_attribute(:defined_custom_attributes, defined_custom_attributes)
           class_inheritable_reader(:defined_custom_attributes)

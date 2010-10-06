@@ -34,6 +34,7 @@ ActiveRecord::Schema.define :version => 0 do
     t.string :name
     t.float :width
     t.float :height
+    t.string :details_url
   end
 
   create_table "locations", :force => true do |t|

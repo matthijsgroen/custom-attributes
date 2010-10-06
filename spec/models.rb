@@ -10,9 +10,13 @@ end
 
 class Product < ActiveRecord::Base
 
+  has_custom_attributes :url => :string
+
   has_custom_attributes :size => :float do |fields|
     fields.size :width, :height, :depth
+    fields.url :details, :on_model => { :details => :details_url }
   end
+
 
 end
 

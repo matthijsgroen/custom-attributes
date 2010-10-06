@@ -57,6 +57,10 @@ class ActiveRecord::CustomAttributes::CustomAttributeList
     attribute.internal_label = internal_label
   end
 
+  def attributes_of_type(type)
+    loaded_attributes.select { |i| i.type == type.to_sym }
+  end
+
   private
 
   attr_reader :defined_attributes, :extra_attribute_types, :record
@@ -98,10 +102,6 @@ class ActiveRecord::CustomAttributes::CustomAttributeList
     I18n.t(internal_name, :scope => translate_scope, :default => defaults)
   end
 
-  def get_attributes_of_type(type)
-    loaded_attributes.select { |i| i.type == type }
-  end
-
   def get_value_of(type, internal_label)
     found = get_attribute(type, internal_label)
     found.value if found
@@ -122,7 +122,7 @@ class ActiveRecord::CustomAttributes::CustomAttributeList
         end
 
         define_method "#{key}_attributes" do
-          get_attributes_of_type(key.to_sym)
+          attributes_of_type(key.to_sym)
         end
 
         define_method "#{key}_value_of" do |internal_name|

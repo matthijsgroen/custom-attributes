@@ -83,7 +83,6 @@ describe "Custom attributes of a person" do
     @person.custom_attributes.defined_labels_for(:date).should =~ ["Born on", "Wed on", "Died on"]
   end
 
-
 end
 
 describe "Custom attributes of a product" do

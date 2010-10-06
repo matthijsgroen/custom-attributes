@@ -75,6 +75,14 @@ describe "Custom attributes of a person" do
     @person.custom_attributes.telephone_value_of(:private).should == "06 28 61 06 28"
   end
 
+  it "should provide defined field types" do
+    @person.custom_attributes.defined_attribute_types.should =~ [:date, :email, :telephone]
+  end
+
+  it "should provide defined labels" do
+    @person.custom_attributes.defined_labels_for(:date).should =~ ["Born on", "Wed on", "Died on"]
+  end
+
 
 end
 

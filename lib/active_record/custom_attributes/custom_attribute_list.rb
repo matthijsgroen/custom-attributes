@@ -32,6 +32,18 @@ class ActiveRecord::CustomAttributes::CustomAttributeList
     loaded_attributes.each(&:save)
   end
 
+  def defined_attribute_types
+    (extra_attribute_types.keys + defined_attributes.keys).uniq
+  end
+
+  def defined_labels_for type
+    results = []
+    (defined_attributes[type.to_sym] || {}).each do |key, options|
+      results << human_label_for(type, key)
+    end
+    results
+  end
+
   def supported_attribute_types
     return @supported_attribute_types if @supported_attribute_types
     standard_attribute_types = {}

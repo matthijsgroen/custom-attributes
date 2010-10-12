@@ -4,16 +4,35 @@ class ActiveRecord::CustomAttributes::CustomAttribute
     @main_model = main_model
     @item_list = item_list
     @attribute_model = attribute_model
+    @marked_for_deletion = false
     load if @attribute_model
   end
 
-  attr_accessor :type, :value, :label, :internal_label
+  [:type, :value, :label, :internal_label].each do |property|
+    attr_accessor property
+
+    define_method "#{property}_with_activation=" do |new_value|
+      @marked_for_deletion = false
+      send("#{property}_without_activation=".to_sym, new_value)
+    end
+    alias_method_chain "#{property}=".to_sym, :activation
+  end
 
   def rename_to new_name
     item_list.rename_label_of self, new_name
   end
 
+  def mark_for_deletion
+    @marked_for_deletion = true
+  end
+
+  def marked_for_deletion?
+    @marked_for_deletion
+  end
+
   def save
+    attribute_model.destroy and return if marked_for_deletion?
+
     attribute_model.value_type = type.to_s
     attribute_model.field_name = internal_label.to_s
     attribute_model.field_label = label

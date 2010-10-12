@@ -123,7 +123,11 @@ module Formtastic
     end
 
     def field_name_for(attribute_type, field_type)
-      "#{@object.class.model_name.underscore}[custom_attributes][#{attribute_type}][#{field_type}][]"
+      if @object.custom_attributes.supported_attribute_types.keys.include? attribute_type
+        "#{@object.class.model_name.underscore}[custom_attributes][#{attribute_type}][#{field_type}][]"
+      else
+        "#{@object.class.model_name.underscore}[#{attribute_type}][#{field_type}][]"
+      end
     end
 
     def custom_field_input(attribute_type, field_method_priority, label, value, options = {})

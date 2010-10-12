@@ -7,8 +7,25 @@ class ActiveRecord::CustomAttributes::CustomAttributeList
     define_attribute_methods
   end
 
+  def set_post_data(post_data)
+    loaded_attributes.each(&:mark_for_deletion)
+    post_data.each do |attribute_type, values|
+      attribute_type = attribute_type.to_sym
+      if supported_attribute_types.keys.include? attribute_type
+        label_list = values["label"]
+        value_list = values["value"]
+
+        label_list.each_with_index do |label, index|
+          add attribute_type, label, value_list[index]
+        end
+
+      end # TODO: Now what? Custom defined attributes also come here. Or should that be changed?
+    end
+  end
+
   def add(type, label, value)
     type = type.to_sym
+    return if label.blank? and value.respond_to? :blank? and value.blank?
     internal_label = convert_to_internal_label(type, label)
     attribute = get_attribute(type, internal_label || label, true)
     attribute.value = value
@@ -58,7 +75,7 @@ class ActiveRecord::CustomAttributes::CustomAttributeList
   end
 
   def attributes_of_type(type)
-    loaded_attributes.select { |i| i.type == type.to_sym }
+    loaded_attributes.select { |i| i.type == type.to_sym and !i.marked_for_deletion? }
   end
 
   private
@@ -104,6 +121,7 @@ class ActiveRecord::CustomAttributes::CustomAttributeList
 
   def get_value_of(type, internal_label)
     found = get_attribute(type, internal_label)
+    return nil if found and found.marked_for_deletion?
     found.value if found
   end
 

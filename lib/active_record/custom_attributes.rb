@@ -108,8 +108,13 @@ module ActiveRecord
       end
 
       module InstanceMethods
+
         def custom_attributes
           @custom_attributes ||= ActiveRecord::CustomAttributes::CustomAttributeList.new(self)
+        end
+
+        def custom_attributes= post_data
+          custom_attributes.set_post_data post_data
         end
 
         private

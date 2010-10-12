@@ -21,7 +21,7 @@ describe "Custom attributes of a person" do
     clean_database!
 
     I18n.backend.store_translations :'nl', {
-      :activerecord => { :custom_attributes => { :person => { :telephone => { :private => "Prive" }}}}
+            :activerecord => {:custom_attributes => {:person => {:telephone => {:private => "Prive"}}}}
     }
     I18n.default_locale = 'nl'
 
@@ -43,7 +43,7 @@ describe "Custom attributes of a person" do
   it "should cache the 'born on' date locally" do
     @person.custom_attributes.add_date "Born on", Date.civil(1981, 5, 31)
     @person.save
-    @person.born_on.should == Date.civil(1981,5, 31)
+    @person.born_on.should == Date.civil(1981, 5, 31)
   end
 
   it "should store values in the database" do
@@ -81,6 +81,44 @@ describe "Custom attributes of a person" do
 
   it "should provide defined labels" do
     @person.custom_attributes.defined_labels_for(:date).should =~ ["Born on", "Wed on", "Died on"]
+  end
+
+  it "should mark attributes for deletion" do
+    @person.custom_attributes.add_telephone "Prive", "06 28 61 06 28"
+
+    fields = @person.custom_attributes.telephone_attributes
+    fields.should have(1).item
+    fields[0].mark_for_deletion
+
+    deleted_fields = @person.custom_attributes.telephone_attributes
+    deleted_fields.should have(0).items
+
+    @person.custom_attributes.telephone_value_of(:private).should == nil
+  end
+
+
+  it "should accept post data in an custom_attributes hash" do
+    # field format is #{@object.class.model_name.underscore}[custom_attributes][#{attribute_type}][#{field_type}][]
+
+    custom_attribute_post_data = {
+            "telephone" => {
+                    "label" => ["Prive", "Werk", ""],
+                    "value" => ["06 28 61 06 28", "1234567890", ""]
+            },
+            "email" => {
+                    "label" => ["Prive", ""],
+                    "value" => ["matthijs.groen@gmail.com", ""]
+            }
+    }
+
+    @person.custom_attributes = custom_attribute_post_data
+
+    fields = @person.custom_attributes.telephone_attributes
+    fields.should have(2).items
+    fields[0].value.should == "06 28 61 06 28"
+    fields[1].value.should == "1234567890"
+
+
   end
 
 end

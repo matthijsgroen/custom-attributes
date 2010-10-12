@@ -17,7 +17,6 @@ class Product < ActiveRecord::Base
     fields.url :details, :on_model => { :details => :details_url }
   end
 
-
 end
 
 class Location < ActiveRecord::Base

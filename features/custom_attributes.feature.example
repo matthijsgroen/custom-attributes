@@ -1,0 +1,24 @@
+Feature: Locations
+  In order to have service providers, suppliers and offices
+  the maintainer of the application
+  need to manage locations
+
+  @javascript
+  Scenario: Location creation
+    Given I am on the new location page
+
+    Given I fill in "Company name" for "Name"
+    And select "Phonenumber" from "Add attribute"
+    And change the label of the first telephone attribute to "General"
+    And change the value of the first telephone attribute to "123-45678"
+
+    Given I follow "Add Phonenumber"
+    And change the label of the second telephone attribute to "Fax"
+    And change the value of the second telephone attribute to "123-45679"
+
+    Given I select "E-mail address" from "Add attribute"
+    And change the label of the first email attribute to "Common"
+    And change the value of the first email attribute to "info@somecompany.com"
+
+    When I press "Create lokation"
+    Then show me the page

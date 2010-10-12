@@ -1,4 +1,4 @@
-class ActsAsTaggableOnMigration < ActiveRecord::Migration
+class CustomAttributesMigration < ActiveRecord::Migration
   def self.up
     create_table :custom_attributes do |t|
 			# label

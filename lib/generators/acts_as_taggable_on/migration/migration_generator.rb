@@ -1,6 +1,6 @@
 require 'rails/generators/migration'
 
-module ActsAsTaggableOn
+module CustomAttributes
   class MigrationGenerator < Rails::Generators::Base
     include Rails::Generators::Migration
 
@@ -24,7 +24,7 @@ module ActsAsTaggableOn
 
     def create_migration_file
       if self.class.orm_has_migration?
-        migration_template 'migration.rb', 'db/migrate/acts_as_taggable_on_migration'
+        migration_template 'migration.rb', 'db/migrate/custom_attributes_migration'
       end
     end
   end

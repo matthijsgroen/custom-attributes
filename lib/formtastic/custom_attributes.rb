@@ -41,9 +41,9 @@ module Formtastic
       end
       field_template = custom_field_input(attribute_type, [attribute_type, storage_type], "", nil, :template => true)
 
-      attribute_human_name = ::I18n.t(:attribute_name,
+      attribute_human_name = ::I18n.t(attribute_type,
               :count => 1,
-              :scope => i18n_scope + [attribute_type]).capitalize
+              :scope => i18n_scope + [:attribute_names]).capitalize
 
       value_fields << content_tag(:li,
               template.link_to(Formtastic::Util.html_safe(attribute_human_name),
@@ -58,8 +58,8 @@ module Formtastic
       @supported_attribute_types[attribute_type] = attribute_human_name
       @supported_attribute_templates << content_tag(
               :fieldset, content_tag(
-                      :legend, self.label(:custom_attributes, :label => ::I18n.t(:attribute_name, :count => 2,
-                              :scope => i18n_scope + [attribute_type]).capitalize), :class => 'label'
+                      :legend, self.label(:custom_attributes, :label => ::I18n.t(attribute_type, :count => 2,
+                              :scope => i18n_scope + [:attribute_names]).capitalize), :class => 'label'
               ) << content_tag(:ol, Formtastic::Util.html_safe(value_fields.join)),
                       :'data-attribute-type' => attribute_type
       )
@@ -109,7 +109,7 @@ module Formtastic
     end
 
     def add_custom_attribute_input
-      label_name = ::I18n.t(:add_attribute, :scope => [:activerecord, :custom_attributes, :standard])
+      label_name = ::I18n.t(:add_custom_attribute, :scope => [:formtastic, :actions])
       field_set_and_list_wrapping_for_method(
               :custom_attributes,
                       {:label => false},
@@ -161,7 +161,7 @@ module Formtastic
 
     def default_custom_field_handler(method, attribute_type, value)
       i18n_scope = [:activerecord, :custom_attributes, @object.class.model_name.underscore.to_sym]
-      attribute_human_name = ::I18n.t(:attribute_name, :count => 1, :scope => i18n_scope + [attribute_type]).capitalize
+      attribute_human_name = ::I18n.t(attribute_type, :count => 1, :scope => i18n_scope + [:attribute_names]).capitalize
       template.send(method, field_name_for(attribute_type, "value"), value) <<
               custom_attribute_delete_link(attribute_human_name)
     end

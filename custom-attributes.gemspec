@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{custom-attributes}
-  s.version = "0.1.2"
+  s.version = "0.2.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Matthijs Groen"]
-  s.date = %q{2010-10-06}
+  s.date = %q{2010-10-12}
   s.description = %q{Easy management of extra model attributes. Can store fields in the model if provided}
   s.email = %q{matthijs.groen@gmail.com}
   s.extra_rdoc_files = [
@@ -29,6 +29,7 @@ Gem::Specification.new do |s|
      "lib/active_record/custom_attributes/custom_attribute_list.rb",
      "lib/active_record/custom_attributes/custom_attribute_model.rb",
      "lib/custom-attributes.rb",
+     "lib/formtastic/custom_attributes.rb",
      "rails/init.rb",
      "spec/custom_attributes/has_custom_attributes_spec.rb",
      "spec/database.yml",

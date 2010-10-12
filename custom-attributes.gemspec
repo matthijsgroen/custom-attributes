@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{custom-attributes}
-  s.version = "0.2.2"
+  s.version = "0.2.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Matthijs Groen"]
@@ -30,6 +30,8 @@ Gem::Specification.new do |s|
      "lib/active_record/custom_attributes/custom_attribute_model.rb",
      "lib/custom-attributes.rb",
      "lib/formtastic/custom_attributes.rb",
+     "lib/generators/acts_as_taggable_on/migration/migration_generator.rb",
+     "lib/generators/acts_as_taggable_on/migration/templates/active_record/migration.rb",
      "rails/init.rb",
      "spec/custom_attributes/has_custom_attributes_spec.rb",
      "spec/database.yml",

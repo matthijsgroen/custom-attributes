@@ -88,7 +88,7 @@ describe "Custom attributes of a person" do
 
     fields = @person.custom_attributes.telephone_attributes
     fields.should have(1).item
-    fields[0].mark_for_deletion
+    fields[0].mark_for_destruction
 
     deleted_fields = @person.custom_attributes.telephone_attributes
     deleted_fields.should have(0).items
@@ -102,12 +102,20 @@ describe "Custom attributes of a person" do
 
     custom_attribute_post_data = {
             "telephone" => {
-                    "label" => ["Prive", "Werk", ""],
-                    "value" => ["06 28 61 06 28", "1234567890", ""]
+                    "0" => {
+                            "label" => "Prive",
+                            "value" => "06 28 61 06 28"
+                    },
+                    "1" => {
+                            "label" => "Werk",
+                            "value" => "1234567890"
+                    }
             },
             "email" => {
-                    "label" => ["Prive", ""],
-                    "value" => ["matthijs.groen@gmail.com", ""]
+                    "0" => {
+                            "label" => "Prive",
+                            "value" => "matthijs.groen@gmail.com"
+                    }
             }
     }
 

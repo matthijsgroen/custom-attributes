@@ -8,7 +8,7 @@ class ActiveRecord::CustomAttributes::CustomAttributeList
   end
 
   def set_post_data(post_data)
-    loaded_attributes.each(&:mark_for_deletion)
+    loaded_attributes.each(&:mark_for_destruction)
     post_data.each do |attribute_type, values|
       attribute_type = attribute_type.to_sym
       if supported_attribute_types.keys.include? attribute_type
@@ -71,7 +71,7 @@ class ActiveRecord::CustomAttributes::CustomAttributeList
   end
 
   def attributes_of_type(type)
-    loaded_attributes.select { |i| i.type == type.to_sym and !i.marked_for_deletion? }
+    loaded_attributes.select { |i| i.type == type.to_sym and !i.marked_for_destruction? }
   end
 
   private
@@ -117,7 +117,7 @@ class ActiveRecord::CustomAttributes::CustomAttributeList
 
   def get_value_of(type, internal_label)
     found = get_attribute(type, internal_label)
-    return nil if found and found.marked_for_deletion?
+    return nil if found and found.marked_for_destruction?
     found.value if found
   end
 

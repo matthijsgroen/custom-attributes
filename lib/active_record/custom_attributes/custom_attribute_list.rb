@@ -12,14 +12,10 @@ class ActiveRecord::CustomAttributes::CustomAttributeList
     post_data.each do |attribute_type, values|
       attribute_type = attribute_type.to_sym
       if supported_attribute_types.keys.include? attribute_type
-        label_list = values["label"]
-        value_list = values["value"]
-
-        label_list.each_with_index do |label, index|
-          add attribute_type, label, value_list[index]
+        values.each do |key, attributes|
+          add attribute_type, attributes["label"], attributes["value"] unless key == "%nr%"
         end
-
-      end # TODO: Now what? Custom defined attributes also come here. Or should that be changed?
+      end
     end
   end
 

@@ -7,6 +7,15 @@ or weight and size measurements to products.
 Most of these fields can be used purely dynamic and objects could have multiples of them (think telephone numbers, or email
 addresses)
 
+This code is *NOT* production ready yet!
+
+TODO
+====
+- Make Formtastic extension better
+- Supply specs for the formtastic part
+- Make custom extensions work as nested forms (accept_attributes_for stuff)
+
+
 Contents of the package
 =======================
 

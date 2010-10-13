@@ -20,6 +20,7 @@
         },
         _create: function() {
             // Bind events for adding and removing attributes
+            var self = this;
             $("li.add-custom-attribute select", this.element).bind("change", this, this._addSelectChange);
 
             var addLinks = $("a.add-link", this.element);
@@ -30,6 +31,8 @@
                     }
                 });
             }
+
+            $(this.element).parents("form").bind("submit", this, this.removeTemplatesForSubmit);
             addLinks.bind("click", this, this._addLinkClick);
             if (this.options.hideEmptySets) {
                 $("fieldset", this.element).each(function() {
@@ -38,7 +41,7 @@
             }
             for (var fieldType in this.options.onAdd) {
                 $("fieldset li.value."+fieldType, this.element).each(function() {
-                    this.options.onAdd[fieldType]($(this));
+                    self.options.onAdd[fieldType]($(this));
                 });
             }
 
@@ -59,7 +62,11 @@
             $("a.add-link", this.element).unbind("click", this._addLinkClick);
             $("a.delete-link", this.element).unbind("click", this._deleteClick);
             $("li.new-attribute-select select", this.element).unbind("change", this._addSelectChange);
+            $(this.element).parents("form").unbind("submit", this.removeTemplatesForSubmit)
             $.Widget.prototype.destroy.apply(this, arguments);
+        },
+        removeTemplatesForSubmit: function(event) {
+            $(event.data.element).find(".template").remove();
         },
         addNewField: function(attributeType) {
             // reset the select choice
@@ -68,12 +75,20 @@
             var fieldset = this.element.find("fieldset[data-attribute-type="+attributeType+"]");
             var addSet = fieldset.find("li.field-addition");
             var template = addSet.find(".template").html();
+            var fieldIndex = fieldset.find("li.value").length;
+
             addSet.before("<li class=\"value optional " + attributeType + "\">" + template + "</li>");
             fieldset.show();
-
             var newField = addSet.prev();
-            newField.find(".delete-link").attr("tabindex", -1).bind("click", this, this._deleteClick);
 
+            // change all %nr% fields in the template to actual indices
+            newField.find("input[name]").each(function() {
+                var fieldName = $(this).attr("name").replace("%nr%", "" + fieldIndex);
+                var fieldId = $(this).attr("id").replace("__nr__", "_" + fieldIndex + "_");
+                $(this).attr("name", fieldName).attr("id", fieldId);
+            });
+
+            newField.find(".delete-link").attr("tabindex", -1).bind("click", this, this._deleteClick);
             for (var fieldType in this.options.onAdd) {
                 if (newField.is("." + fieldType)) {
                     this.options.onAdd[fieldType](newField);
@@ -104,9 +119,18 @@
         },
         _deleteClick: function(event) {
             var fieldSet = $(this).parents("fieldset");
-            $(this).parents("li:first").remove();
+            var fieldRow = $(this).parents("li:first");
+
+            var deleteCheck = fieldRow.find("input.delete_check")
+            if (deleteCheck.length > 0) {
+                deleteCheck.val("true");
+                fieldRow.hide();
+            } else {
+                fieldRow.remove();
+            }
+
             if (event.data.options.hideEmptySets) {
-                if ($("li.value", fieldSet).length == 0) fieldSet.hide();
+                if ($("li.value:visible", fieldSet).length == 0) fieldSet.hide();
             }
             return false;
         },

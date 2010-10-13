@@ -38,8 +38,9 @@ module Formtastic
 
       index = 0
       value_fields = @object.custom_attributes.attributes_of_type(attribute_type).collect do |attribute|
-        custom_field_input(attribute_type, [attribute_type, storage_type], attribute.label, attribute.value, index, {})
+        result = custom_field_input(attribute_type, [attribute_type, storage_type], attribute.label, attribute.value, index, {})
         index += 1
+        result
       end
       field_template = custom_field_input(attribute_type, [attribute_type, storage_type], "", nil, "%nr%", :template => true)
 
@@ -87,7 +88,7 @@ module Formtastic
                       :class => "add-link",
                       :title => ::I18n.t(:create_custom_attribute, :scope => [:formtastic, :actions], :attribute => attribute_human_name),
                       :'data-attribute-type' => storage_type
-              ) << field_template << label_data_list_for(storage_type, options[:labels]),
+              ) << field_template << label_data_list_for(association_name, options[:labels]),
               :class => "field-addition"
       )
 
@@ -132,7 +133,7 @@ module Formtastic
       if @object.custom_attributes.supported_attribute_types.keys.include? attribute_type
         "#{@object.class.model_name.underscore}[custom_attributes][#{attribute_type}][#{index}][#{field_type}]"
       else
-        "#{@object.class.model_name.underscore}[#{attribute_type}_attributes][#{index}][#{field_type}]"
+        "#{@object.class.model_name.underscore}[#{attribute_type.to_s.pluralize}_attributes][#{index}][#{field_type}]"
       end
     end
 

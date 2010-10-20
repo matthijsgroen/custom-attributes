@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{custom-attributes}
-  s.version = "0.2.15"
+  s.version = "0.2.16"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Matthijs Groen"]
-  s.date = %q{2010-10-13}
+  s.date = %q{2010-10-20}
   s.description = %q{Easy management of extra model attributes. Can store fields in the model if provided}
   s.email = %q{matthijs.groen@gmail.com}
   s.extra_rdoc_files = [

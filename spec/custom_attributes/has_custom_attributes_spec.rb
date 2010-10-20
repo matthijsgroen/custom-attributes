@@ -136,7 +136,8 @@ describe "Custom attributes of a person" do
                     },
                     "1" => {
                             "label" => "Werk",
-                            "value" => "1234567890"
+                            "value" => "1234567890",
+                            "_destroy" => "false"
                     }
             },
             "email" => {

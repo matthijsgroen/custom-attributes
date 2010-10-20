@@ -13,7 +13,7 @@ class ActiveRecord::CustomAttributes::CustomAttributeList
       attribute_type = attribute_type.to_sym
       if supported_attribute_types.keys.include? attribute_type
         values.each do |key, attributes|
-          removed = attributes["_destroy"]
+          removed = attributes["_destroy"].to_s == "true"
           add attribute_type, attributes["label"], attributes["value"] unless key == "%nr%" or removed
         end
       end

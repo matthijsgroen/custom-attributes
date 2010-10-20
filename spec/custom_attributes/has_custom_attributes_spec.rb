@@ -127,6 +127,31 @@ describe "Custom attributes of a person" do
     fields[1].value.should == "1234567890"
 
 
+    custom_attribute_second_post_data = {
+            "telephone" => {
+                    "0" => {
+                            "label" => "Prive",
+                            "value" => "06 28 61 06 28",
+                            "_destroy" => true
+                    },
+                    "1" => {
+                            "label" => "Werk",
+                            "value" => "1234567890"
+                    }
+            },
+            "email" => {
+                    "0" => {
+                            "label" => "Prive",
+                            "value" => "matthijs.groen@gmail.com"
+                    }
+            }
+    }
+    @person.custom_attributes = custom_attribute_second_post_data
+
+    fields = @person.custom_attributes.telephone_attributes
+    fields.should have(1).items
+    fields[0].value.should == "1234567890"
+
   end
 
 end

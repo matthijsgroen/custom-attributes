@@ -16,9 +16,11 @@ Feature: Locations
     And change the label of the second telephone attribute to "Fax"
     And change the value of the second telephone attribute to "123-45679"
 
-    Given I select "E-mail address" from "Add attribute"
-    And change the label of the first email attribute to "Common"
-    And change the value of the first email attribute to "info@somecompany.com"
+    And add the following attributes:
+    | Type            | Label   | Value                |
+    | E-mail address  | Common  | info@somecompany.com |
 
-    When I press "Create lokation"
+    And remove the last telephone attribute
+
+    When I press "Create location"
     Then show me the page

@@ -21,13 +21,18 @@ module ActiveRecord
         field_definitions = CustomAttributeDefinitionHelper.new field_types
         yield field_definitions if block_given?
         defined_custom_attributes = field_definitions.defined_attributes
+        defined_custom_validations = field_definitions.defined_validations
 
         if has_custom_attributes?
           write_inheritable_attribute(:defined_custom_attributes, self.defined_custom_attributes.deep_merge(defined_custom_attributes))
+          write_inheritable_attribute(:defined_custom_validations, self.defined_custom_validations.deep_merge(defined_custom_validations))
           write_inheritable_attribute(:defined_custom_field_types, field_types)
         else
           write_inheritable_attribute(:defined_custom_attributes, defined_custom_attributes)
           class_inheritable_reader(:defined_custom_attributes)
+
+          write_inheritable_attribute(:defined_custom_validations, defined_custom_validations)
+          class_inheritable_reader(:defined_custom_validations)
 
           write_inheritable_attribute(:defined_custom_field_types, extra_field_types)
           class_inheritable_reader(:defined_custom_field_types)
@@ -48,6 +53,7 @@ module ActiveRecord
 
       def initialize extra_field_types
         @defined_attributes = {}
+        @defined_validations = {}
 
         extra_field_types.each do |key, value|
           class_eval do
@@ -64,12 +70,14 @@ module ActiveRecord
         end
       end
 
-      attr_reader :defined_attributes
+      attr_reader :defined_attributes, :defined_validations
 
       private
 
       def define_field(type, *args)
         options = args.extract_options!
+        options.assert_valid_keys(:on_model, :validate_with, :validate_all_with)
+
         attributes_on_model = {}
         if options[:on_model].is_a? Array
           options[:on_model].each do |attribute|
@@ -78,13 +86,18 @@ module ActiveRecord
         elsif options[:on_model].is_a? Hash
           attributes_on_model = options[:on_model]
         end
+        if options[:validate_all_with]
+          @defined_validations[type] = options[:validate_all_with]
+        end
+
         args.each do |field|
           field = field.to_sym
           @defined_attributes[type] ||= {}
           @defined_attributes[type][field] = {
                   :type => type,
                   :name => field,
-                  :on_model => attributes_on_model[field] || false
+                  :on_model => attributes_on_model[field] || false,
+                  :validate_with => options[:validate_with] || nil
           }
         end
       end
@@ -101,6 +114,7 @@ module ActiveRecord
 
         base.before_save :cache_custom_attributes
         base.after_save :save_custom_attributes
+        base.validate :validate_custom_attributes
       end
 
       module ClassMethods
@@ -126,6 +140,11 @@ module ActiveRecord
         def save_custom_attributes
           custom_attributes.save
         end
+
+        def validate_custom_attributes
+          custom_attributes.validate(errors)
+        end
+
       end
 
     end

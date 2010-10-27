@@ -1,19 +1,13 @@
 require File.expand_path('../../spec_helper', __FILE__)
 
 describe "Model without custom attributes" do
-
   subject { Location }
-
   it { should_not have_custom_attributes }
-
 end
 
 describe "Model with custom attributes" do
-
   subject { Person }
-
   it { should have_custom_attributes }
-
 end
 
 describe "Custom attributes of a person" do
@@ -21,11 +15,12 @@ describe "Custom attributes of a person" do
     clean_database!
 
     I18n.backend.store_translations :'nl', {
-            :activerecord => {:custom_attributes => {:person => {:telephone => {:private => "Prive"}}}}
+            :activerecord => {:custom_attributes => {:person => {:telephone => {:private => "Prive"}}}},
+            :date         => {:formats => {:default => "%d-%m-%Y"}}
     }
     I18n.default_locale = 'nl'
 
-    @person = Person.new
+    @person             = Person.new
   end
 
   subject { @person.custom_attributes }
@@ -51,7 +46,7 @@ describe "Custom attributes of a person" do
     @person.save
 
     loaded_person = Person.find @person.id
-    fields = loaded_person.custom_attributes.telephone_attributes
+    fields        = loaded_person.custom_attributes.telephone_attributes
     fields.should have(1).item
     fields[0].value.should == "06 28 61 06 28"
   end
@@ -86,7 +81,7 @@ describe "Custom attributes of a person" do
   it "should mark attributes for deletion" do
     @person.custom_attributes.add_telephone "Prive", "06 28 61 06 28"
 
-    fields = @person.custom_attributes.telephone_attributes
+    fields         = @person.custom_attributes.telephone_attributes
     fields.should have(1).item
     fields[0].mark_for_destruction
 
@@ -100,7 +95,7 @@ describe "Custom attributes of a person" do
   it "should accept post data in an custom_attributes hash" do
     # field format is #{@object.class.model_name.underscore}[custom_attributes][#{attribute_type}][#{field_type}][]
 
-    custom_attribute_post_data = {
+    custom_attribute_post_data        = {
             "telephone" => {
                     "0" => {
                             "label" => "Prive",
@@ -111,7 +106,7 @@ describe "Custom attributes of a person" do
                             "value" => "1234567890"
                     }
             },
-            "email" => {
+            "email"     => {
                     "0" => {
                             "label" => "Prive",
                             "value" => "matthijs.groen@gmail.com"
@@ -119,9 +114,9 @@ describe "Custom attributes of a person" do
             }
     }
 
-    @person.custom_attributes = custom_attribute_post_data
+    @person.custom_attributes         = custom_attribute_post_data
 
-    fields = @person.custom_attributes.telephone_attributes
+    fields                            = @person.custom_attributes.telephone_attributes
     fields.should have(2).items
     fields[0].value.should == "06 28 61 06 28"
     fields[1].value.should == "1234567890"
@@ -130,29 +125,61 @@ describe "Custom attributes of a person" do
     custom_attribute_second_post_data = {
             "telephone" => {
                     "0" => {
-                            "label" => "Prive",
-                            "value" => "06 28 61 06 28",
+                            "label"    => "Prive",
+                            "value"    => "06 28 61 06 28",
                             "_destroy" => true
                     },
                     "1" => {
-                            "label" => "Werk",
-                            "value" => "1234567890",
+                            "label"    => "Werk",
+                            "value"    => "1234567890",
                             "_destroy" => "false"
                     }
             },
-            "email" => {
+            "email"     => {
                     "0" => {
                             "label" => "Prive",
                             "value" => "matthijs.groen@gmail.com"
                     }
             }
     }
-    @person.custom_attributes = custom_attribute_second_post_data
+    @person.custom_attributes         = custom_attribute_second_post_data
 
-    fields = @person.custom_attributes.telephone_attributes
+    fields                            = @person.custom_attributes.telephone_attributes
     fields.should have(1).items
     fields[0].value.should == "1234567890"
 
+  end
+
+  it "should invalidate incorrect values" do
+    custom_attribute_invalid_post_data = {
+            "date" => {
+                    "0" => {
+                            "label" => "Born on",
+                            "value" => "23422stufferror"
+
+                    }
+            }
+    }
+    @person.custom_attributes          = custom_attribute_invalid_post_data
+    @person.should_not be_valid
+
+    date_attributes = @person.custom_attributes.date_attributes
+    date_attributes.should have(1).items
+    date_attributes[0].should_not be_valid
+  end
+
+  it "should validate correct values" do
+    custom_attribute_valid_post_data   = {
+            "date" => {
+                    "0" => {
+                            "label" => "Born on",
+                            "value" => "31-05-1981"
+
+                    }
+            }
+    }
+    @person.custom_attributes          = custom_attribute_valid_post_data
+    @person.should be_valid
   end
 
 end
@@ -197,6 +224,21 @@ describe "Custom attributes of a product" do
     fields[0].rename_to "Height"
 
     @product.custom_attributes.size_value_of(:width).should == nil
+  end
+
+  it "should run custom validations as method" do
+    @product.custom_attributes.add_size "Width", 16.3 # too large
+    @product.should_not be_valid
+  end
+
+  it "should run custom validations as lambda (value incorrect)" do
+    @product.custom_attributes.add_date "In stock since", Date.civil(2009, 12, 31)
+    @product.should_not be_valid
+  end
+
+  it "should run custom validations as lambda (value correct)" do
+    @product.custom_attributes.add_date "In stock since", Date.civil(2010, 1, 1)
+    @product.should be_valid
   end
 
 end

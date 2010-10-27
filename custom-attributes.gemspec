@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{custom-attributes}
-  s.version = "0.2.17"
+  s.version = "0.2.18"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Matthijs Groen"]
-  s.date = %q{2010-10-20}
+  s.date = %q{2010-10-27}
   s.description = %q{Easy management of extra model attributes. Can store fields in the model if provided}
   s.email = %q{matthijs.groen@gmail.com}
   s.extra_rdoc_files = [
@@ -33,6 +33,7 @@ Gem::Specification.new do |s|
      "lib/generators/custom_attributes/migration/migration_generator.rb",
      "lib/generators/custom_attributes/migration/templates/active_record/migration.rb",
      "rails/init.rb",
+     "spec/custom_attributes/custom_attributes.sqlite3",
      "spec/custom_attributes/has_custom_attributes_spec.rb",
      "spec/database.yml",
      "spec/database.yml.sample",

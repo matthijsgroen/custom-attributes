@@ -38,7 +38,7 @@ module Formtastic
 
       index = 0
       value_fields = @object.custom_attributes.attributes_of_type(attribute_type).collect do |attribute|
-        result = custom_field_input(attribute_type, [attribute_type, storage_type], attribute.label, attribute.value, index, {})
+        result = custom_field_input(attribute_type, [attribute_type, storage_type], attribute.label, attribute.value, index, { :errors => attribute.errors })
         index += 1
         result
       end
@@ -163,22 +163,47 @@ module Formtastic
     ## Field addition support
 
     def custom_string_input(attribute_type, value, index, options = {})
-      default_custom_field_handler(:text_field_tag, attribute_type, value, index)
+      default_custom_field_handler(:text_field_tag, attribute_type, value, index, options)
     end
 
     def custom_email_input(attribute_type, value, index, options = {})
-      default_custom_field_handler(:email_field_tag, attribute_type, value, index)
+      default_custom_field_handler(:email_field_tag, attribute_type, value, index, options)
     end
 
     def custom_url_input(attribute_type, value, index, options = {})
-      default_custom_field_handler(:url_field_tag, attribute_type, value, index)
+      default_custom_field_handler(:url_field_tag, attribute_type, value, index, options)
     end
 
-    def default_custom_field_handler(method, attribute_type, value, index)
+    def custom_date_input(attribute_type, value, index, options = {})
       i18n_scope = [:activerecord, :custom_attributes, @object.class.model_name.underscore.to_sym]
       attribute_human_name = ::I18n.t(attribute_type, :count => 1, :scope => i18n_scope + [:attribute_names]).capitalize
+      format = options[:format] || I18n.t(:default, :scope => [:date, :formats]) || '%d %b %Y'
+
+      error_listing = ""
+      if options[:errors]
+        errors = [options[:errors][:value]]
+        errors = errors.flatten.compact.uniq
+        error_listing = send(:"error_#{self.class.inline_errors}", [*errors]) if errors.any?
+      end
+
+      str_value = value.respond_to?(:strftime) ? value.try(:strftime, format) : value
+
+      template.text_field_tag(field_name_for(attribute_type, "value", index), str_value, :class => 'custom-datepicker') <<
+              custom_attribute_delete_link(attribute_human_name) << error_listing
+    end
+
+    def default_custom_field_handler(method, attribute_type, value, index, options)
+      i18n_scope = [:activerecord, :custom_attributes, @object.class.model_name.underscore.to_sym]
+      attribute_human_name = ::I18n.t(attribute_type, :count => 1, :scope => i18n_scope + [:attribute_names]).capitalize
+      error_listing = ""
+      if options[:errors]
+        errors = [options[:errors][:value]]
+        errors = errors.flatten.compact.uniq
+        error_listing = send(:"error_#{self.class.inline_errors}", [*errors]) if errors.any?
+      end
+
       template.send(method, field_name_for(attribute_type, "value", index), value) <<
-              custom_attribute_delete_link(attribute_human_name)
+              custom_attribute_delete_link(attribute_human_name) << error_listing
     end
 
     delegate :content_tag, :to => :template

@@ -59,7 +59,7 @@ class ActiveRecord::CustomAttributes::CustomAttributeList
   end
 
   def get_custom_validations_for(type, name)
-    [defined_validations[type], defined_attributes[type][name][:validate_with]].compact
+    [defined_validations[type], (defined_attributes[type][name] || {})[:validate_with]].compact
   end
 
   def defined_attribute_types

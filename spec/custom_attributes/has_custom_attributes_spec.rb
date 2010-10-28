@@ -241,4 +241,9 @@ describe "Custom attributes of a product" do
     @product.should be_valid
   end
 
+  it "should not run custom validations if name differs" do
+    @product.custom_attributes.add_date "In stock sance", Date.civil(2009, 12, 31)
+    @product.should be_valid
+  end
+
 end

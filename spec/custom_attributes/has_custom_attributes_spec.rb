@@ -59,6 +59,14 @@ describe "Custom attributes of a person" do
     loaded_person.custom_attributes.telephone_value_of(:private).should == "06 28 61 06 28"
   end
 
+  it "should accept custom defined labels" do
+    @person.custom_attributes.add_telephone "Werk", "06 28 61 06 28"
+    @person.save
+
+    loaded_person = Person.find @person.id
+    loaded_person.custom_attributes.telephone_value_of("Werk").should == "06 28 61 06 28"
+  end
+
   it "should rename labels" do
     @person.custom_attributes.add_telephone "Werk", "06 28 61 06 28"
 

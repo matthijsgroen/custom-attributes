@@ -1,11 +1,11 @@
 class ActiveRecord::CustomAttributes::CustomAttribute
 
   def initialize(item_list, main_model, attribute_model)
-    @main_model = main_model
-    @item_list = item_list
-    @attribute_model = attribute_model
+    @main_model             = main_model
+    @item_list              = item_list
+    @attribute_model        = attribute_model
     @marked_for_destruction = false
-    @errors = ActiveModel::Errors.new(self)
+    @errors                 = ActiveModel::Errors.new(self)
     load if @attribute_model
   end
 
@@ -64,24 +64,24 @@ class ActiveRecord::CustomAttributes::CustomAttribute
   attr_reader :main_model, :item_list
 
   FIELD_MAPPING = {
-          :text => :text,
-          :string => :text,
-          :float => :float,
-          :number => :number,
-          :boolean => :number,
+          :text      => :text,
+          :string    => :text,
+          :float     => :float,
+          :number    => :number,
+          :boolean   => :number,
           :date_time => :date_time,
-          :date => :date_time,
-          :time => :date_time
+          :date      => :date_time,
+          :time      => :date_time
   }
 
   def assign_model_value
-    attribute_model.value_type = type.to_s
-    attribute_model.field_name = internal_label.to_s
+    attribute_model.value_type  = type.to_s
+    attribute_model.field_name  = internal_label.to_s
     attribute_model.field_label = label
-    write_value = item_list.supported_attribute_types[type]
-    field = FIELD_MAPPING[write_value]
+    write_value                 = item_list.supported_attribute_types[type]
+    field                       = FIELD_MAPPING[write_value]
 
-    converted_value = value
+    converted_value             = value
     converted_value = value ? 1 : 0 if write_value == :boolean
 
     ([:text, :date_time, :number, :float] - [field]).each { |value_field| attribute_model.send("#{value_field}_value=", nil) }
@@ -89,13 +89,17 @@ class ActiveRecord::CustomAttributes::CustomAttribute
   end
 
   def load
-    self.type = attribute_model.value_type.to_sym
-    self.internal_label = attribute_model.field_name.to_sym
+    self.type  = attribute_model.value_type.to_sym
+    if attribute_model.field_name.nil? or attribute_model.field_name.blank?
+      self.internal_label = nil
+    else
+      self.internal_label = attribute_model.field_name.to_sym
+    end
     self.label = attribute_model.field_label
 
     read_value = item_list.supported_attribute_types[self.type]
-    field = FIELD_MAPPING[read_value]
-    value = attribute_model.send("#{field}_value")
+    field      = FIELD_MAPPING[read_value]
+    value      = attribute_model.send("#{field}_value")
     value = value == 0 ? false : true if read_value == :boolean
     #puts "#{self.type} => #{read_value} = (#{field}) #{value} - #{self.label} (#{self.internal_label})"
     self.value = value

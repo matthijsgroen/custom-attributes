@@ -13,18 +13,19 @@ begin
     t.rcov = true
     t.rcov_opts = ['--exclude', 'spec']
   end
-  
+
 rescue LoadError
   # Rspec 2.0
+  require 'rspec'
   require 'rspec/core/rake_task'
 
   desc 'Default: run specs'
   task :default => :spec  
-  Rspec::Core::RakeTask.new do |t|
+  RSpec::Core::RakeTask.new do |t|
     t.pattern = "spec/**/*_spec.rb"
   end
   
-  Rspec::Core::RakeTask.new('rcov') do |t|
+  RSpec::Core::RakeTask.new('rcov') do |t|
     t.pattern = "spec/**/*_spec.rb"
     t.rcov = true
     t.rcov_opts = ['--exclude', 'spec']

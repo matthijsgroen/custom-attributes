@@ -177,7 +177,7 @@ module Formtastic
     def custom_date_input(attribute_type, value, index, options = {})
       i18n_scope = [:activerecord, :custom_attributes, @object.class.model_name.underscore.to_sym]
       attribute_human_name = ::I18n.t(attribute_type, :count => 1, :scope => i18n_scope + [:attribute_names]).capitalize
-      format = options[:format] || I18n.t(:default, :scope => [:date, :formats]) || '%d %b %Y'
+      format = options[:format] || ::I18n.t(:default, :scope => [:date, :formats]) || '%d %b %Y'
 
       error_listing = ""
       if options[:errors]

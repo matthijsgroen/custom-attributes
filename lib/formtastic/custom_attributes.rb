@@ -202,8 +202,14 @@ module Formtastic
         error_listing = send(:"error_#{self.class.inline_errors}", [*errors]) if errors.any?
       end
 
-      template.send(method, field_name_for(attribute_type, "value", index), value) <<
-              custom_attribute_delete_link(attribute_human_name) << error_listing
+      result = "".html_safe
+      result << (options[:prefix] + " ").html_safe if options[:prefix]
+      result << template.send(method, field_name_for(attribute_type, "value", index), value)
+      result << (" " + options[:suffix]).html_safe if options[:suffix]
+
+      result << custom_attribute_delete_link(attribute_human_name) << error_listing
+
+      result
     end
 
     delegate :content_tag, :to => :template

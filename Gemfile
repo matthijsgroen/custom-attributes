@@ -1,8 +1,8 @@
 source :gemcutter
 
 # Rails 3.0
-gem 'rails',        '~> 3.0.1'
-gem 'rspec',        '~> 2.0.0'
+gem 'rails',        '~> 3.0'
+gem 'rspec',        '~> 2.0'
 #gem 'validates_timeliness', '~> 3.0.0'
 gem 'jeweler'
 gem 'rcov'

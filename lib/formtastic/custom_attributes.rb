@@ -63,7 +63,7 @@ module Formtastic
       @supported_attribute_templates << content_tag(
               :fieldset, content_tag(
                       :legend, self.label(:custom_attributes, :label => ::I18n.t(attribute_type, :count => 2,
-                              :scope => i18n_scope + [:attribute_names]).capitalize), :class => 'label'
+                              :scope => i18n_scope + [:attribute_names]).capitalize), :class => 'label custom-attribute-group'
               ) << content_tag(:ol, Formtastic::Util.html_safe(value_fields.join)),
                       :'data-attribute-type' => attribute_type
       )

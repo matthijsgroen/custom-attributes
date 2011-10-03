@@ -95,7 +95,7 @@ module Formtastic
       @supported_attribute_types[storage_type] = attribute_human_name
       @supported_attribute_templates << content_tag(
               :fieldset, content_tag(
-                      :legend, self.label(:custom_attributes, :label => association.klass.model_name.human(:count => 2)), :class => 'label'
+                      :legend, self.label(:custom_attributes, :label => association.klass.model_name.human(:count => 2)), :class => 'label custom-attribute-group'
               ) << content_tag(:ol, Formtastic::Util.html_safe(value_fields.join)),
                       :'data-attribute-type' => storage_type
       )
